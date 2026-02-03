@@ -1,0 +1,55 @@
+Sample Medical Document
+
+Patient Information Management
+
+This is a sample medical document created for testing the PDF upload functionality 
+of the MediBotix AI service.
+
+Medical Conditions Overview:
+
+1. Type 2 Diabetes Mellitus
+   - Chronic metabolic disorder affecting glucose regulation
+   - Requires regular monitoring of blood sugar levels
+   - Treatment includes lifestyle modifications and medication
+
+2. Essential Hypertension
+   - Persistent elevation of blood pressure
+   - Risk factor for cardiovascular disease
+   - Management includes diet, exercise, and antihypertensive medications
+
+3. Bronchial Asthma
+   - Chronic inflammatory airway disease
+   - Characterized by recurrent breathing difficulties
+   - Treated with bronchodilators and corticosteroids
+
+Treatment Protocols:
+
+- Regular health checkups every 3-6 months
+- Medication adherence is critical
+- Lifestyle modifications: balanced diet, regular exercise
+- Stress management techniques
+- Adequate sleep and hydration
+
+Emergency Warning Signs:
+
+Seek immediate medical attention if experiencing:
+- Severe chest pain or pressure
+- Difficulty breathing or shortness of breath
+- Sudden severe headache
+- Loss of consciousness
+- Uncontrolled bleeding
+
+Preventive Care:
+
+- Annual health screenings
+- Vaccination as per schedule
+- Regular physical activity (30 minutes daily)
+- Balanced nutrition with fruits and vegetables
+- Avoid smoking and excessive alcohol consumption
+
+Disclaimer:
+This document is for testing purposes only and should not be used as actual 
+medical advice. Always consult with qualified healthcare professionals for 
+medical guidance.
+
+End of Document
