@@ -38,11 +38,16 @@ async def upload(file: UploadFile):
             "message": f"Failed to process file: {error_message}"
         }
 
+from pydantic import BaseModel
+
+class QueryRequest(BaseModel):
+    question: str
+
 @app.post("/ask")
-async def ask(q: str):
+async def ask(request: QueryRequest):
     try:
-        logging.info(f"Query received: {q}")
-        answer = ask_question(q)
+        logging.info(f"Query received: {request.question}")
+        answer = ask_question(request.question)
         return {"answer": answer}
     except Exception as e:
         error_message = str(e)
