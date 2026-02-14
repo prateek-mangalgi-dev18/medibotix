@@ -11,12 +11,17 @@ DOCS_FILE = "docs.pkl"
 client = Mistral(api_key=MISTRAL_API_KEY)
 
 def load_index():
-    if not os.path.exists(INDEX_FILE):
+    if not os.path.exists(INDEX_FILE) or not os.path.exists(DOCS_FILE):
         return None, None
 
     index = faiss.read_index(INDEX_FILE)
-    docs = pickle.load(open(DOCS_FILE, "rb"))
-    return index, docs
+    try:
+        with open(DOCS_FILE, "rb") as f:
+            docs = pickle.load(f)
+        return index, docs
+    except Exception:
+        return None, None
+
 
 
 def ask_question(q):

@@ -3,219 +3,179 @@ import { useState, useRef, useEffect } from "react"
 import axios from "axios"
 import { BACKEND } from "@/lib/api"
 import Link from "next/link"
+import {
+  Send,
+  Loader2,
+  Bot,
+  User,
+  HeartPulse,
+  ArrowLeft,
+  Trash2,
+  Terminal,
+  Activity,
+  Cpu,
+  Fingerprint,
+  Sun,
+  Moon
+} from "lucide-react"
+import { cn } from "@/lib/utils"
+import ThemeToggle from "@/components/ThemeToggle"
 
 interface Message {
-  role: 'user' | 'assistant'
+  role: "user" | "assistant"
   content: string
 }
 
 export default function ChatPage() {
-
-  const [q, setQ] = useState("")
   const [messages, setMessages] = useState<Message[]>([])
+  const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
-  const messagesEndRef = useRef<HTMLDivElement>(null)
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    scrollToBottom()
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+    }
   }, [messages])
 
-  const ask = async () => {
-    if (!q.trim()) return
+  const sendMessage = async () => {
+    if (!input.trim() || loading) return
 
-    const userMessage: Message = { role: 'user', content: q }
-    setMessages(prev => [...prev, userMessage])
-
-    const currentQuestion = q
-    setQ("")
+    const userMsg: Message = { role: "user", content: input }
+    setMessages(prev => [...prev, userMsg])
+    setInput("")
     setLoading(true)
 
     try {
-      const res = await axios.post(`${BACKEND}/ask?q=${currentQuestion}`)
-      const aiMessage: Message = { role: 'assistant', content: res.data.answer }
-      setMessages(prev => [...prev, aiMessage])
-    } catch (error) {
-      const errorMessage: Message = {
-        role: 'assistant',
-        content: 'Sorry, I encountered an error. Please try again.'
-      }
-      setMessages(prev => [...prev, errorMessage])
+      const response = await axios.post(`${BACKEND}/ask`, { question: input })
+      setMessages(prev => [...prev, { role: "assistant", content: response.data.answer }])
+    } catch (err) {
+      setMessages(prev => [...prev, { role: "assistant", content: "AI Core Offline: Network request failed." }])
     } finally {
       setLoading(false)
     }
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault()
-      ask()
-    }
-  }
-
-  const formatResponse = (text: string) => {
-    const lines = text.split('\n')
-
-    return lines.map((line, idx) => {
-      const numberedMatch = line.match(/^(\d+\.\s+\*\*)(.*?)(\*\*:?\s*)(.*)/);
-      if (numberedMatch) {
-        return (
-          <div key={idx} className="mb-3 animate-fadeIn">
-            <span className="font-bold text-green-600 dark:text-green-400">{numberedMatch[1].replace('**', '')}{numberedMatch[2]}:</span>
-            <span className="ml-1">{numberedMatch[4]}</span>
-          </div>
-        )
-      }
-
-      const parts = line.split(/(\*\*.*?\*\*)/g)
-
-      return (
-        <div key={idx} className={line.trim() === '' ? 'h-2' : 'mb-2 animate-fadeIn'}>
-          {parts.map((part, i) => {
-            if (part.startsWith('**') && part.endsWith('**')) {
-              const boldText = part.slice(2, -1)
-              return <strong key={i} className="font-bold text-green-600 dark:text-green-400">{boldText}</strong>
-            }
-            return <span key={i}>{part}</span>
-          })}
-        </div>
-      )
-    })
-  }
-
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-gray-900 transition-colors duration-500">
+    <div className="h-screen flex flex-col bg-background relative animate-nothing">
 
-      {/* Header */}
-      <div className="glass dark:glass-dark shadow-lg animate-fadeIn sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
-                <span className="text-2xl">🏥</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Medical AI Assistant</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-0.5">Understanding your health reports, simplified</p>
-              </div>
+      {/* Industrial Header */}
+      <header className="border-b border-border p-4 flex items-center justify-between bg-card relative z-20">
+        <div className="flex items-center gap-6">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-7 h-7 flex items-center justify-center border border-border rounded-full bg-card group-hover:bg-primary transition-colors">
+              <HeartPulse className="w-4 h-4 text-foreground" />
             </div>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/"
-                className="text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors text-sm font-medium px-4 py-2 rounded-lg hover:bg-white/50 dark:hover:bg-black/20"
-              >
-                ← Home
-              </Link>
+            <span className="n-dot font-black text-sm uppercase tracking-tighter">medibotix</span>
+          </Link>
+          <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
+            <div className="flex items-center gap-2 text-[10px] n-dot text-muted">
+              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+              SESSION: ACTIVE
             </div>
           </div>
         </div>
-      </div>
 
-      {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-4">
-
-        {messages.length === 0 && (
-          <div className="text-center text-gray-500 dark:text-gray-400 mt-20 animate-fadeIn">
-            <div className="text-7xl mb-6 animate-bounce">💬</div>
-            <p className="text-2xl font-medium text-gray-700 dark:text-gray-200 mb-3">No messages yet</p>
-            <p className="text-lg text-gray-500 dark:text-gray-400 mb-6">Ask a question about your uploaded medical document</p>
-            <div className="max-w-md mx-auto glass dark:glass-dark p-6 rounded-2xl">
-              <p className="text-sm text-gray-600 dark:text-gray-300 flex items-center justify-center gap-2">
-                <span className="text-xl">💡</span>
-                <span>I can only answer health-related questions from your documents</span>
-              </p>
-            </div>
-          </div>
-        )}
-
-        {messages.map((msg, idx) => (
-          <div
-            key={idx}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'} animate-slideIn`}
-          >
-            <div
-              className={`max-w-2xl rounded-2xl px-6 py-4 shadow-lg transform hover:scale-[1.02] transition-all duration-300 ${msg.role === 'user'
-                ? 'bg-gradient-to-br from-blue-600 to-blue-700 dark:from-blue-700 dark:to-blue-800 text-white'
-                : 'glass dark:glass-dark text-gray-800 dark:text-gray-100 border border-green-100 dark:border-green-900'
-                }`}
-            >
-              <div className={`text-xs font-semibold mb-3 flex items-center gap-2 ${msg.role === 'user' ? 'text-blue-100' : 'text-green-600 dark:text-green-400'
-                }`}>
-                {msg.role === 'user' ? (
-                  <>
-                    <span className="text-base">👤</span>
-                    <span>You</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-base">🏥</span>
-                    <span>Medical Assistant</span>
-                  </>
-                )}
-              </div>
-              <div className="leading-relaxed text-[15px]">
-                {msg.role === 'assistant' ? formatResponse(msg.content) : msg.content}
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {loading && (
-          <div className="flex justify-start animate-slideIn">
-            <div className="glass dark:glass-dark text-gray-800 dark:text-gray-100 border border-green-100 dark:border-green-900 shadow-lg rounded-2xl px-6 py-4 max-w-2xl">
-              <div className="text-xs font-semibold mb-3 flex items-center gap-2 text-green-600 dark:text-green-400">
-                <span className="text-base">🏥</span>
-                <span>Medical Assistant</span>
-              </div>
-              <div className="flex items-center space-x-3">
-                <div className="flex space-x-1">
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                </div>
-                <span className="text-gray-600 dark:text-gray-300 text-sm">Analyzing your question...</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div ref={messagesEndRef} />
-      </div>
-
-      {/* Input Area */}
-      <div className="glass dark:glass-dark border-t-2 border-green-100 dark:border-green-900 px-6 py-5 shadow-2xl animate-fadeIn">
-        <div className="max-w-4xl mx-auto flex gap-4">
-          <textarea
-            value={q}
-            onChange={e => setQ(e.target.value)}
-            onKeyPress={handleKeyPress}
-            placeholder="Ask about your medical report... (Press Enter to send)"
-            className="flex-1 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-800 focus:border-green-400 dark:focus:border-green-500 rounded-xl px-5 py-4 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-green-200 dark:focus:ring-green-800 resize-none transition-all placeholder-gray-400 dark:placeholder-gray-500"
-            rows={2}
-          />
-          <button
-            onClick={ask}
-            disabled={loading || !q.trim()}
-            className="bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed text-white px-10 py-4 rounded-xl font-semibold transition-all shadow-lg hover:shadow-2xl transform hover:scale-105 disabled:hover:scale-100 duration-300 flex items-center gap-2"
-          >
-            {loading ? (
-              <>
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                <span>Sending...</span>
-              </>
-            ) : (
-              <>
-                <span className="text-xl">📤</span>
-                <span>Send</span>
-              </>
-            )}
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
+            UPLOAD NEW
+          </Link>
+          <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
+            RESET
           </button>
         </div>
-      </div>
+      </header>
 
+      <div className="flex-1 flex overflow-hidden">
+
+        {/* Workspace Area */}
+        <main className="flex-1 flex flex-col min-w-0">
+          <div
+            ref={scrollRef}
+            className="flex-1 overflow-y-auto p-4 md:p-12 space-y-12"
+          >
+            {messages.length === 0 ? (
+              <div className="h-full flex flex-col items-center justify-center text-center max-w-sm mx-auto space-y-8">
+                <div className="w-20 h-20 border border-border rounded-full flex items-center justify-center relative bg-secondary">
+                  <Fingerprint className="w-10 h-10 opacity-20" />
+                  <div className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin" />
+                </div>
+                <div>
+                  <h2 className="n-serif text-3xl mb-4 italic">Workspace ID: Analysis</h2>
+                  <p className="text-[10px] text-muted n-dot tracking-widest uppercase">The ingested report is mapped to memory. Submit query to continue.</p>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg, i) => (
+                <div
+                  key={i}
+                  className={cn(
+                    "flex flex-col space-y-2 animate-nothing",
+                    msg.role === "assistant" ? "items-start" : "items-end"
+                  )}
+                >
+                  <div className="flex items-center gap-2 text-[99x] n-dot text-foreground/60 px-2 font-bold uppercase tracking-wider">
+                    {msg.role === "assistant" ? <Bot className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                    {msg.role === "assistant" ? "Medibotix" : "User"}
+                  </div>
+
+                  <div className={cn(
+                    "p-6 max-w-[90%] md:max-w-[75%] shadow-sm rounded-[24px] border transition-all",
+                    msg.role === "assistant"
+                      ? "bg-card border-border text-foreground"
+                      : "bg-primary text-[#000000] border-primary font-bold"
+                  )}>
+                    <div className="text-xs md:text-sm leading-relaxed font-mono whitespace-pre-wrap">
+                      {msg.content}
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
+
+            {loading && (
+              <div className="flex flex-col space-y-2 animate-nothing">
+                <div className="flex items-center gap-2 text-[9px] n-dot text-muted px-2">
+                  <Loader2 className="w-3 h-3 animate-spin text-primary" />
+                  AI_CORE_PROCESSING...
+                </div>
+                <div className="nothing-widget p-6 w-32 flex justify-between">
+                  <div className="w-1 h-3 bg-primary animate-bounce" />
+                  <div className="w-1 h-3 bg-primary animate-bounce [animation-delay:-0.1s]" />
+                  <div className="w-1 h-3 bg-primary animate-bounce [animation-delay:-0.2s]" />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Terminal Input */}
+          <div className="p-4 md:p-8 bg-card border-t border-border mt-auto">
+            <div className="max-w-4xl mx-auto flex gap-4">
+              <div className="flex-1 relative">
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-mono text-sm opacity-50">&gt;_</div>
+                <input
+                  value={input}
+                  onChange={e => setInput(e.target.value)}
+                  onKeyDown={e => e.key === "Enter" && sendMessage()}
+                  placeholder="Enter Command or Question..."
+                  className="w-full bg-background border border-border rounded-full px-12 py-3 text-sm n-dot focus:outline-none focus:border-primary transition-all shadow-inner"
+                />
+              </div>
+              <button
+                onClick={sendMessage}
+                disabled={loading || !input.trim()}
+                className={cn(
+                  "w-12 h-12 rounded-full border border-border flex items-center justify-center transition-all bg-card",
+                  loading || !input.trim() ? "opacity-20" : "hover:bg-primary hover:border-primary hover:text-white"
+                )}
+              >
+                <Send className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </main>
+      </div>
     </div>
   )
 }

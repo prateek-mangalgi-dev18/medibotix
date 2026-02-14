@@ -22,21 +22,23 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
         }
     }, [])
 
+    useEffect(() => {
+        if (mounted) {
+            const root = window.document.documentElement
+            root.classList.remove('light', 'dark')
+            root.classList.add(theme)
+        }
+    }, [theme, mounted])
+
     const toggleTheme = () => {
         const newTheme = theme === 'light' ? 'dark' : 'light'
         setTheme(newTheme)
         localStorage.setItem('theme', newTheme)
     }
 
-    if (!mounted) {
-        return <>{children}</>
-    }
-
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
-            <div className={theme}>
-                {children}
-            </div>
+            {children}
         </ThemeContext.Provider>
     )
 }

@@ -1,178 +1,116 @@
 "use client"
 import Link from "next/link"
+import {
+  FileText,
+  Bot,
+  MessageSquare,
+  Upload,
+  HeartPulse,
+  Activity,
+  ArrowUpRight,
+  Shield,
+  Zap
+} from "lucide-react"
+import ThemeToggle from "@/components/ThemeToggle"
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 dark:from-gray-900 dark:via-blue-950 dark:to-gray-900 transition-colors duration-500">
-
-      {/* Header */}
-      <header className="glass dark:glass-dark sticky top-0 z-50 animate-fadeIn">
-        <div className="max-w-7xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3 animate-slideIn">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-green-500 rounded-full flex items-center justify-center shadow-lg transform hover:scale-110 transition-transform duration-300">
-                <span className="text-3xl">🏥</span>
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 dark:text-white">MediBotix</h1>
-                <p className="text-xs text-gray-600 dark:text-gray-400">Your Medical AI Assistant</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <Link
-                href="/upload"
-                className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-2.5 rounded-lg font-semibold transition-all shadow-md hover:shadow-xl transform hover:scale-105 duration-300"
-              >
-                Get Started →
-              </Link>
-            </div>
+    <div className="min-h-screen flex flex-col p-4 md:p-8 relative">
+      {/* Nothing Style Navigation */}
+      <nav className="flex items-center justify-between mb-16 px-4 relative z-10">
+        <Link href="/" className="flex items-center gap-2 group">
+          <div className="w-8 h-8 flex items-center justify-center border border-border rounded-full bg-card group-hover:bg-primary transition-colors">
+            <HeartPulse className="w-4 h-4 text-foreground" />
           </div>
-        </div>
-      </header>
+          <span className="n-dot font-bold text-lg tracking-tighter">medibotix</span>
+        </Link>
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-20 animate-fadeIn">
-        <div className="text-center max-w-4xl mx-auto">
-          <div className="text-7xl mb-6 animate-scaleIn">🏥💬</div>
-          <h2 className="text-5xl font-bold text-gray-900 dark:text-white mb-6 animate-slideIn">
-            Understand Your Medical Reports
-            <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-green-600 dark:from-blue-400 dark:to-green-400 mt-2">
-              In Simple Language
-            </span>
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-10 leading-relaxed animate-fadeIn" style={{ animationDelay: '0.2s' }}>
-            Upload your medical reports and get clear, easy-to-understand explanations from our AI assistant.
-            No medical degree required.
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <Link href="/upload" className="btn-nothing btn-nothing-primary">
+            Get Started
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero: Industrial Typography */}
+      <main className="flex-1 max-w-7xl mx-auto w-full relative z-10">
+        <div className="flex flex-col items-center text-center mb-32 animate-nothing">
+          <div className="inline-block px-3 py-1 border border-border rounded-full text-[10px] n-dot mb-12">
+           PATIENT DATA SIMPLIFIED
+          </div>
+
+          <h1 className="n-serif text-5xl md:text-8xl leading-[1.1] mb-12 max-w-4xl">
+            Come to play with AI. Your reports <span className="text-primary italic">simplified</span>.
+          </h1>
+
+          <p className="text-sm text-muted max-w-lg n-dot leading-relaxed uppercase tracking-widest">
+            Join thousands of users to build something uniquely yours, and discover the creativity of the MediBotix community.
           </p>
-          <div className="flex gap-4 justify-center animate-fadeIn" style={{ animationDelay: '0.4s' }}>
+        </div>
+
+        {/* Feature Cards Matrix */}
+        <div className="grid md:grid-cols-3 gap-1 border-t border-l border-border mb-32 industrial-grid shadow-2xl shadow-black/5 dark:shadow-white/5">
+          {features.map((feature, i) => (
+            <div
+              key={i}
+              className="p-12 border-r border-b border-border bg-card/50 hover:bg-card transition-all group animate-nothing"
+              style={{ animationDelay: `${0.1 + (i * 0.1)}s` }}
+            >
+              <div className="flex justify-between items-start mb-12">
+                <div className="w-12 h-12 border border-border rounded-full flex items-center justify-center bg-background transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
+                  <feature.icon className="w-6 h-6" />
+                </div>
+              </div>
+
+              <h3 className="n-serif text-3xl mb-4 italic">{feature.title}</h3>
+              <p className="text-xs text-muted leading-relaxed uppercase tracking-tighter mb-8 font-medium">
+                {feature.description}
+              </p>
+
+              <div className="h-[1px] w-full bg-border relative overflow-hidden bg-background">
+                <div className="absolute inset-0 bg-primary translate-x-[-100%] group-hover:translate-x-0 transition-transform duration-500" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Essential Action Box */}
+        <div className="nothing-widget bg-card/80 backdrop-blur-md border-[2px] border-primary p-16 md:p-24 text-center overflow-hidden relative mb-24 shadow-2xl shadow-primary/10">
+          <div className="absolute inset-0 dot-matrix opacity-10" />
+          <div className="relative z-10">
+            <h2 className="n-serif text-4xl md:text-6xl mb-12 italic text-foreground">
+              Ready to start your analysis?
+            </h2>
             <Link
               href="/upload"
-              className="group bg-gradient-to-br from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-xl font-semibold text-lg shadow-lg hover:shadow-2xl transition-all transform hover:scale-105 duration-300 flex items-center gap-2"
+              className="inline-flex items-center gap-4 px-12 py-5 bg-primary text-primary-foreground rounded-full n-dot text-sm font-bold uppercase tracking-widest hover:scale-105 transition-transform"
             >
-              <span className="group-hover:rotate-12 transition-transform duration-300">📤</span>
-              <span>Upload Report</span>
+              Upload Sample <ArrowUpRight className="w-5 h-5" />
             </Link>
-            <a
-              href="#features"
-              className="bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 hover:border-blue-500 dark:hover:border-blue-400 text-gray-700 dark:text-gray-200 px-8 py-4 rounded-xl font-semibold text-lg shadow-md hover:shadow-lg transition-all transform hover:scale-105 duration-300"
-            >
-              Learn More
-            </a>
           </div>
         </div>
-      </section>
+      </main>
 
-      {/* Features Section */}
-      <section id="features" className="max-w-7xl mx-auto px-6 py-16">
-        <h3 className="text-3xl font-bold text-center text-gray-900 dark:text-white mb-12 animate-fadeIn">
-          How MediBotix Helps You
-        </h3>
-
-        <div className="grid md:grid-cols-3 gap-8">
-
-          {/* Feature 1 */}
-          <div className="group glass dark:glass-dark rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 animate-fadeIn border border-blue-100 dark:border-blue-900" style={{ animationDelay: '0.1s' }}>
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">📄</div>
-            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Upload Reports</h4>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              Simply upload your medical reports in PDF or text format. We support all types of medical documents.
-            </p>
-          </div>
-
-          {/* Feature 2 */}
-          <div className="group glass dark:glass-dark rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 animate-fadeIn border border-green-100 dark:border-green-900" style={{ animationDelay: '0.2s' }}>
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">🤖</div>
-            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">AI Analysis</h4>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              Our AI reads your reports and understands the medical information to provide accurate answers.
-            </p>
-          </div>
-
-          {/* Feature 3 */}
-          <div className="group glass dark:glass-dark rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:scale-105 animate-fadeIn border border-blue-100 dark:border-blue-900" style={{ animationDelay: '0.3s' }}>
-            <div className="text-5xl mb-4 group-hover:scale-110 transition-transform duration-300">💬</div>
-            <h4 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Simple Explanations</h4>
-            <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-              Ask questions and get clear answers in simple language that anyone can understand.
-            </p>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-900 dark:to-blue-950 py-16 mt-16 animate-fadeIn">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-
-            <div className="text-white animate-slideIn">
-              <h3 className="text-3xl font-bold mb-6">Why Choose MediBotix?</h3>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3 transform hover:translate-x-2 transition-transform duration-300">
-                  <span className="text-2xl">✓</span>
-                  <div>
-                    <p className="font-semibold text-lg">Simple Language</p>
-                    <p className="text-blue-100 dark:text-blue-200">No medical jargon - explanations anyone can understand</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3 transform hover:translate-x-2 transition-transform duration-300">
-                  <span className="text-2xl">✓</span>
-                  <div>
-                    <p className="font-semibold text-lg">Instant Answers</p>
-                    <p className="text-blue-100 dark:text-blue-200">Get explanations in seconds, not days</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3 transform hover:translate-x-2 transition-transform duration-300">
-                  <span className="text-2xl">✓</span>
-                  <div>
-                    <p className="font-semibold text-lg">Medical Focus</p>
-                    <p className="text-blue-100 dark:text-blue-200">Only answers health-related questions from your reports</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3 transform hover:translate-x-2 transition-transform duration-300">
-                  <span className="text-2xl">✓</span>
-                  <div>
-                    <p className="font-semibold text-lg">24/7 Available</p>
-                    <p className="text-blue-100 dark:text-blue-200">Access your medical information anytime, anywhere</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="glass dark:glass-dark rounded-2xl p-8 border border-white/20 animate-scaleIn transform hover:scale-105 transition-all duration-500">
-              <div className="text-6xl mb-4 text-center animate-bounce">🎯</div>
-              <h4 className="text-2xl font-bold text-white text-center mb-4">Ready to Get Started?</h4>
-              <p className="text-blue-100 dark:text-blue-200 text-center mb-6">
-                Upload your medical report and start getting clear answers today
-              </p>
-              <Link
-                href="/upload"
-                className="block w-full bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 px-6 py-4 rounded-xl font-bold text-lg text-center hover:bg-blue-50 dark:hover:bg-gray-700 transition-all shadow-lg transform hover:scale-105 duration-300"
-              >
-                Upload Your Report →
-              </Link>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 dark:bg-black text-gray-400 dark:text-gray-500 py-8 mt-16">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-3">
-            <span className="text-2xl">🏥</span>
-            <span className="text-white font-bold text-lg">MediBotix</span>
-          </div>
-          <p className="text-sm">
-            Your Medical AI Assistant - Understanding health reports made simple
-          </p>
-          <p className="text-xs mt-4 text-gray-500 dark:text-gray-600">
-            ⚠️ Disclaimer: This is an educational tool. Always consult healthcare professionals for medical advice.
-          </p>
-        </div>
-      </footer>
-
+    
     </div>
   )
 }
+
+const features = [
+  {
+    title: "Ingestion",
+    description: "Pure document extraction. Minimalist processing paths for clinical data.",
+    icon: FileText
+  },
+  {
+    title: "Intelligence",
+    description: "Decoding complex terminology, powered by Mistral AI.",
+    icon: Bot
+  },
+  {
+    title: "Interaction",
+    description: "Quick responses within seconds.",
+    icon: MessageSquare
+  }
+]

@@ -39,5 +39,16 @@ async def upload(file: UploadFile):
         }
 
 @app.post("/ask")
-async def ask(q:str):
-    return {"answer": ask_question(q)}
+async def ask(q: str):
+    try:
+        logging.info(f"Query received: {q}")
+        answer = ask_question(q)
+        return {"answer": answer}
+    except Exception as e:
+        error_message = str(e)
+        logging.error(f"Query failed: {error_message}")
+        return {
+            "error": error_message,
+            "message": f"Failed to get answer: {error_message}"
+        }
+

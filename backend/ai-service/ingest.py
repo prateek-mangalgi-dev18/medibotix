@@ -97,12 +97,19 @@ def ingest_file(filename, content):
         text[i:i+500]
         for i in range(0, len(text), 450)
     ]
+    
+    if not chunks:
+        chunks = [text] if text.strip() else ["No extractable text found in this document."]
 
     # Batch embed all chunks in a single API call
     vectors = embed_batch(chunks)
+    
+    if not vectors:
+        raise ValueError("Failed to generate embeddings for the document.")
 
     # Create FAISS index
     dim = len(vectors[0])
+
     index = faiss.IndexFlatL2(dim)
     index.add(np.array(vectors).astype("float32"))
 

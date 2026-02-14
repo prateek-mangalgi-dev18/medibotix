@@ -1,47 +1,150 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f5f5f5;
+  --foreground: #000000;
+  --primary: #ffcc00;
+  /* Nothing Yellow */
+  --primary-foreground: #000000;
+  --secondary: #e5e5e5;
+  --accent: #ffcc00;
+  --border: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --muted: #666666;
+  --muted-foreground: #999999;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-serif: var(--font-newsreader);
+
+  /* Enable class-based dark mode */
+  --variant-dark: .dark &;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Manual Dark Theme Override */
+:root.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --primary: #ffcc00;
+  --primary-foreground: #000000;
+  --secondary: #111111;
+  --accent: #ffcc00;
+  --border: #222222;
+  --card: #111111;
+  --card-foreground: #ffffff;
+  --muted: #888888;
+  --muted-foreground: #333333;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Glassmorphism styles */
-.glass {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+/* Nothing(R) Dot Matrix Overlay */
+.dot-matrix {
+  background-image: radial-gradient(var(--border) 0.5px, transparent 0.5px);
+  background-size: 32px 32px;
+  pointer-events: none;
 }
 
-.glass-dark {
-  background: rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+.n-serif {
+  font-family: var(--font-serif), serif;
+  font-style: italic;
+  font-weight: 400;
 }
 
-/* Custom animations */
-@keyframes fadeIn {
+/* Industrial Grid */
+.industrial-grid {
+  border: 0.5px solid var(--border);
+}
+
+/* Nothing(R) Typography Simulation */
+.n-dot {
+  font-family: var(--font-mono), monospace;
+  letter-spacing: -0.05em;
+  text-transform: uppercase;
+}
+
+/* Nothing Widget */
+.nothing-widget {
+  background: var(--card);
+  border: 0.5px solid var(--border);
+  border-radius: 24px;
+  padding: 24px;
+  transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.nothing-widget:hover {
+  transform: translateY(-2px);
+}
+
+/* Buttons */
+.btn-nothing {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  border: 0.5px solid var(--border);
+  border-radius: 9999px;
+  background: var(--card);
+  color: var(--foreground);
+  font-family: var(--font-mono), monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.2s ease;
+}
+
+.btn-nothing:hover {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+.btn-nothing-primary {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  border-color: var(--border);
+}
+
+.btn-nothing-primary:hover {
+  background: #e6b800;
+  border-color: var(--border);
+}
+
+/* Scrollbar - Industrial Style */
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+}
+
+/* Animations */
+@keyframes slideUp {
   from {
     opacity: 0;
     transform: translateY(10px);
@@ -53,43 +156,22 @@ body {
   }
 }
 
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateX(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.animate-nothing {
+  animation: slideUp 0.4s cubic-bezier(0.2, 0, 0, 1) forwards;
 }
 
-@keyframes scaleIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+/* Grid Separator */
+.grid-sep {
+  position: relative;
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.5s ease-out;
-}
-
-.animate-slideIn {
-  animation: slideIn 0.5s ease-out;
-}
-
-.animate-scaleIn {
-  animation: scaleIn 0.3s ease-out;
-}
-
-/* Smooth transitions */
-* {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+.grid-sep::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 0.5px;
+  background: var(--border);
+  opacity: 0.3;
 }
