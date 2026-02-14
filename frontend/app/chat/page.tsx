@@ -158,27 +158,29 @@ export default function ChatPage() {
                 </div>
               </div>
             )}
+            {/* Spacer for floating bar */}
+            <div className="h-32 w-full shrink-0" />
           </div>
 
-          {/* Terminal Input */}
-          <div className="p-4 md:p-8 bg-card border-t border-border mt-auto">
-            <div className="max-w-4xl mx-auto flex gap-4">
+          {/* Floating Terminal Input */}
+          <div className="fixed bottom-8 left-0 right-0 z-30 px-4 md:px-8">
+            <div className="max-w-4xl mx-auto flex gap-4 p-2 rounded-full bg-card/60 backdrop-blur-xl border border-border/50 shadow-2xl">
               <div className="flex-1 relative">
-                <div className="absolute left-4 top-1/2 -translate-y-1/2 text-primary font-mono text-sm opacity-50">&gt;_</div>
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-mono text-sm opacity-50">&gt;_</div>
                 <input
                   value={input}
                   onChange={e => setInput(e.target.value)}
                   onKeyDown={e => e.key === "Enter" && sendMessage()}
                   placeholder="Enter Command or Question..."
-                  className="w-full bg-background border border-border rounded-full px-12 py-3 text-sm n-dot focus:outline-none focus:border-primary transition-all shadow-inner"
+                  className="w-full bg-transparent px-14 py-4 text-sm n-dot focus:outline-none transition-all"
                 />
               </div>
               <button
                 onClick={sendMessage}
                 disabled={loading || !input.trim()}
                 className={cn(
-                  "w-12 h-12 rounded-full border border-border flex items-center justify-center transition-all bg-card",
-                  loading || !input.trim() ? "opacity-20" : "hover:bg-primary hover:border-primary hover:text-white"
+                  "w-12 h-12 rounded-full border border-border flex items-center justify-center transition-all bg-background/50",
+                  loading || !input.trim() ? "opacity-20" : "hover:bg-primary hover:border-primary hover:text-black"
                 )}
               >
                 <Send className="w-4 h-4" />
