@@ -20,6 +20,7 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ThemeToggle from "@/components/ThemeToggle"
+import ReactMarkdown from 'react-markdown'
 
 interface Message {
   role: "user" | "assistant"
@@ -115,7 +116,7 @@ export default function ChatPage() {
                     msg.role === "assistant" ? "items-start" : "items-end"
                   )}
                 >
-                  <div className="flex items-center gap-2 text-[99x] n-dot text-foreground/60 px-2 font-bold uppercase tracking-wider">
+                  <div className="flex items-center gap-2 text-[9px] n-dot text-foreground/60 px-2 font-bold uppercase tracking-wider">
                     {msg.role === "assistant" ? <Bot className="w-3 h-3" /> : <User className="w-3 h-3" />}
                     {msg.role === "assistant" ? "Medibotix" : "User"}
                   </div>
@@ -127,7 +128,17 @@ export default function ChatPage() {
                       : "bg-primary text-[#000000] border-primary font-bold"
                   )}>
                     <div className="text-xs md:text-sm leading-relaxed font-mono whitespace-pre-wrap">
-                      {msg.content}
+                      <ReactMarkdown
+                        components={{
+                          p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
+                          strong: ({ children }) => <strong className="font-black border-b-[3px] border-primary/40 dark:border-primary/60 pb-0.5">{children}</strong>,
+                          ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-2">{children}</ul>,
+                          ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-2">{children}</ol>,
+                          li: ({ children }) => <li className="mb-1">{children}</li>,
+                        }}
+                      >
+                        {msg.content}
+                      </ReactMarkdown>
                     </div>
                   </div>
                 </div>
