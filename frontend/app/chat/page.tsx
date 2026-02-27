@@ -1,5 +1,6 @@
 "use client"
 import { useState, useRef, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import axios from "axios"
 import { BACKEND } from "@/lib/api"
 import Link from "next/link"
@@ -28,6 +29,7 @@ interface Message {
 }
 
 export default function ChatPage() {
+  const router = useRouter()
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState("")
   const [loading, setLoading] = useState(false)
@@ -62,30 +64,38 @@ export default function ChatPage() {
 
       {/* Industrial Header */}
       <header className="border-b border-border p-4 flex items-center justify-between bg-card relative z-20">
-        <div className="flex items-center gap-6">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-7 h-7 flex items-center justify-center border border-border rounded-full bg-card group-hover:bg-primary transition-colors">
-              <HeartPulse className="w-4 h-4 text-foreground" />
-            </div>
-            <span className="n-dot font-black text-sm uppercase tracking-tighter">medibotix</span>
-          </Link>
-          <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
-            <div className="flex items-center gap-2 text-[10px] n-dot text-muted">
-              <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-              SESSION: ACTIVE
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => router.back()}
+            className="w-10 h-10 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-all group"
+            title="Go Back"
+          >
+            <ArrowLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+          </button>
+          <div className="flex items-center gap-6 border-l border-border pl-4">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-7 h-7 flex items-center justify-center border border-border rounded-full bg-card group-hover:bg-primary transition-colors">
+                <HeartPulse className="w-4 h-4 text-foreground" />
+              </div>
+              <span className="n-dot font-black text-sm uppercase tracking-tighter">medibotix</span>
+            </Link>
+            <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
+              <div className="flex items-center gap-2 text-[10px] n-dot text-muted">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                SESSION: ACTIVE
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex items-center gap-4">
-          <ThemeToggle />
-          <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
-            UPLOAD NEW
-          </Link>
-          <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
-            RESET
-          </button>
-        </div>
+          <div className="flex items-center gap-4">
+            <ThemeToggle />
+            <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
+              UPLOAD NEW
+            </Link>
+            <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
+              RESET
+            </button>
+          </div>
       </header>
 
       <div className="flex-1 flex overflow-hidden">
