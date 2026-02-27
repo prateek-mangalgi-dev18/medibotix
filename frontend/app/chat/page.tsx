@@ -86,16 +86,17 @@ export default function ChatPage() {
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4">
-            <ThemeToggle />
-            <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
-              UPLOAD NEW
-            </Link>
-            <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
-              RESET
-            </button>
-          </div>
+        <div className="flex items-center gap-4">
+          <ThemeToggle />
+          <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
+            UPLOAD NEW
+          </Link>
+          <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
+            RESET
+          </button>
+        </div>
       </header>
 
       <div className="flex-1 flex overflow-hidden">
