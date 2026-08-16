@@ -1,3 +1,11 @@
+# fastapi
+# uvicorn
+# faiss-cpu
+# numpy
+# python-dotenv
+# mistralai
+# pypdf
+# python-multipart
 fastapi
 uvicorn
 faiss-cpu
@@ -6,3 +14,4 @@ python-dotenv
 mistralai
 pypdf
 python-multipart
+python-docx

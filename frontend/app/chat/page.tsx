@@ -1,4 +1,5 @@
 "use client"
+
 import { useState, useRef, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import axios from "axios"
@@ -11,195 +12,541 @@ import {
   User,
   HeartPulse,
   ArrowLeft,
-  Trash2,
-  Terminal,
-  Activity,
-  Cpu,
-  Fingerprint,
-  Sun,
-  Moon
+  Fingerprint
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import ThemeToggle from "@/components/ThemeToggle"
-import ReactMarkdown from 'react-markdown'
+import ReactMarkdown from "react-markdown"
+
+
+// ============================================================
+// MESSAGE TYPE
+// ============================================================
 
 interface Message {
   role: "user" | "assistant"
   content: string
 }
 
+
+// ============================================================
+// CHAT PAGE
+// ============================================================
+
 export default function ChatPage() {
+
   const router = useRouter()
+
   const [messages, setMessages] = useState<Message[]>([])
+
   const [input, setInput] = useState("")
+
   const [loading, setLoading] = useState(false)
-  const scrollRef = useRef<HTMLDivElement>(null)
+
+  const scrollRef =
+    useRef<HTMLDivElement>(null)
+
+
+  // ==========================================================
+  // AUTO SCROLL
+  // ==========================================================
 
   useEffect(() => {
+
     if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+
+      scrollRef.current.scrollTop =
+        scrollRef.current.scrollHeight
+
     }
+
   }, [messages])
 
-  const sendMessage = async () => {
-    if (!input.trim() || loading) return
 
-    const userMsg: Message = { role: "user", content: input }
-    setMessages(prev => [...prev, userMsg])
+  // ==========================================================
+  // SEND MESSAGE
+  // ==========================================================
+
+  const sendMessage = async () => {
+
+    if (
+      !input.trim()
+      || loading
+    ) {
+      return
+    }
+
+
+    const question =
+      input.trim()
+
+
+    // --------------------------------------------------------
+    // IMPORTANT:
+    // Capture the conversation BEFORE adding the new
+    // user message.
+    //
+    // This means the backend receives the previous
+    // conversation as history and the current question
+    // separately.
+    // --------------------------------------------------------
+
+    const previousMessages =
+      messages
+
+
+    const userMsg: Message = {
+      role: "user",
+      content: question
+    }
+
+
+    // Immediately display user message
+    setMessages(
+      prev => [
+        ...prev,
+        userMsg
+      ]
+    )
+
+
     setInput("")
+
     setLoading(true)
 
+
     try {
-      const response = await axios.post(`${BACKEND}/ask`, { question: input })
-      setMessages(prev => [...prev, { role: "assistant", content: response.data.answer }])
+
+      // ------------------------------------------------------
+      // Send current question + conversation history
+      // ------------------------------------------------------
+
+      const response =
+        await axios.post(
+          `${BACKEND}/ask`,
+          {
+            question: question,
+
+            history: previousMessages
+          }
+        )
+
+
+      const answer =
+        response.data.answer
+
+
+      setMessages(
+        prev => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              answer ||
+              "No response received from AI Core."
+          }
+        ]
+      )
+
+
     } catch (err) {
-      setMessages(prev => [...prev, { role: "assistant", content: "AI Core Offline: Network request failed." }])
+
+      console.error(
+        "Chat request failed:",
+        err
+      )
+
+
+      setMessages(
+        prev => [
+          ...prev,
+          {
+            role: "assistant",
+            content:
+              "AI Core Offline: Network request failed."
+          }
+        ]
+      )
+
+
     } finally {
+
       setLoading(false)
+
     }
   }
 
+
+  // ==========================================================
+  // RESET CHAT
+  // ==========================================================
+
+  const resetChat = () => {
+
+    setMessages([])
+
+    setInput("")
+
+    setLoading(false)
+  }
+
+
+  // ==========================================================
+  // UI
+  // ==========================================================
+
   return (
+
     <div className="h-screen flex flex-col bg-background relative animate-nothing">
 
-      {/* Industrial Header */}
+      {/* ================================================== */}
+      {/* HEADER */}
+      {/* ================================================== */}
+
       <header className="border-b border-border p-4 flex items-center justify-between bg-card relative z-20">
+
         <div className="flex items-center gap-4">
+
           <button
             onClick={() => router.back()}
             className="w-10 h-10 flex items-center justify-center border border-border rounded-full hover:bg-secondary transition-all group"
             title="Go Back"
           >
-            <ArrowLeft className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+
+            <ArrowLeft
+              className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors"
+            />
+
           </button>
+
+
           <div className="flex items-center gap-6 border-l border-border pl-4">
-            <Link href="/" className="flex items-center gap-2 group">
+
+            <Link
+              href="/"
+              className="flex items-center gap-2 group"
+            >
+
               <div className="w-7 h-7 flex items-center justify-center border border-border rounded-full bg-card group-hover:bg-primary transition-colors">
-                <HeartPulse className="w-4 h-4 text-foreground" />
+
+                <HeartPulse
+                  className="w-4 h-4 text-foreground"
+                />
+
               </div>
-              <span className="n-dot font-black text-sm uppercase tracking-tighter">medibotix</span>
+
+
+              <span className="n-dot font-black text-sm uppercase tracking-tighter">
+                medibotix
+              </span>
+
             </Link>
+
+
             <div className="hidden md:flex items-center gap-4 border-l border-border pl-6">
+
               <div className="flex items-center gap-2 text-[10px] n-dot text-muted">
+
                 <div className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+
                 SESSION: ACTIVE
+
               </div>
+
             </div>
+
           </div>
+
         </div>
 
+
         <div className="flex items-center gap-4">
+
           <ThemeToggle />
-          <Link href="/upload" className="btn-nothing h-9 px-4 text-[10px]">
+
+
+          <Link
+            href="/upload"
+            className="btn-nothing h-9 px-4 text-[10px]"
+          >
             UPLOAD NEW
           </Link>
-          <button onClick={() => setMessages([])} className="btn-nothing h-9 px-4 text-[10px] hover:text-primary">
+
+
+          <button
+            onClick={resetChat}
+            className="btn-nothing h-9 px-4 text-[10px] hover:text-primary"
+          >
             RESET
           </button>
+
         </div>
+
       </header>
+
+
+      {/* ================================================== */}
+      {/* MAIN */}
+      {/* ================================================== */}
 
       <div className="flex-1 flex overflow-hidden">
 
-        {/* Workspace Area */}
         <main className="flex-1 flex flex-col min-w-0">
+
           <div
             ref={scrollRef}
             className="flex-1 overflow-y-auto p-4 md:p-12 space-y-12"
           >
+
+            {/* ================================================= */}
+            {/* EMPTY STATE */}
+            {/* ================================================= */}
+
             {messages.length === 0 ? (
+
               <div className="h-full flex flex-col items-center justify-center text-center max-w-sm mx-auto space-y-8">
+
                 <div className="w-20 h-20 border border-border rounded-full flex items-center justify-center relative bg-secondary">
-                  <Fingerprint className="w-10 h-10 opacity-20" />
+
+                  <Fingerprint
+                    className="w-10 h-10 opacity-20"
+                  />
+
                   <div className="absolute inset-0 border-t-2 border-primary rounded-full animate-spin" />
+
                 </div>
+
+
                 <div>
-                  <h2 className="n-serif text-3xl mb-4 italic">Workspace ID: Analysis</h2>
-                  <p className="text-[10px] text-muted n-dot tracking-widest uppercase">The ingested report is mapped to memory. Submit query to continue.</p>
+
+                  <h2 className="n-serif text-3xl mb-4 italic">
+                    Workspace ID: Analysis
+                  </h2>
+
+
+                  <p className="text-[10px] text-muted n-dot tracking-widest uppercase">
+                    The ingested report is mapped to memory. Submit query to continue.
+                  </p>
+
                 </div>
+
               </div>
+
             ) : (
-              messages.map((msg, i) => (
-                <div
-                  key={i}
-                  className={cn(
-                    "flex flex-col space-y-2 animate-nothing",
-                    msg.role === "assistant" ? "items-start" : "items-end"
-                  )}
-                >
-                  <div className="flex items-center gap-2 text-[9px] n-dot text-foreground/60 px-2 font-bold uppercase tracking-wider">
-                    {msg.role === "assistant" ? <Bot className="w-3 h-3" /> : <User className="w-3 h-3" />}
-                    {msg.role === "assistant" ? "Medibotix" : "User"}
+
+              messages.map(
+                (msg, i) => (
+
+                  <div
+                    key={i}
+                    className={cn(
+                      "flex flex-col space-y-2 animate-nothing",
+                      msg.role === "assistant"
+                        ? "items-start"
+                        : "items-end"
+                    )}
+                  >
+
+                    <div className="flex items-center gap-2 text-[9px] n-dot text-foreground/60 px-2 font-bold uppercase tracking-wider">
+
+                      {
+                        msg.role === "assistant"
+                          ? (
+                            <Bot className="w-3 h-3" />
+                          )
+                          : (
+                            <User className="w-3 h-3" />
+                          )
+                      }
+
+                      {
+                        msg.role === "assistant"
+                          ? "Medibotix"
+                          : "User"
+                      }
+
+                    </div>
+
+
+                    <div
+                      className={cn(
+                        "p-6 max-w-[90%] md:max-w-[75%] shadow-sm rounded-[24px] border transition-all",
+
+                        msg.role === "assistant"
+                          ? "bg-card border-border text-foreground"
+                          : "bg-primary text-[#000000] border-primary font-bold"
+                      )}
+                    >
+
+                      <div className="text-xs md:text-sm leading-relaxed font-mono whitespace-pre-wrap">
+
+                        <ReactMarkdown
+                          components={{
+                            p: ({
+                              children
+                            }) => (
+                              <p className="mb-4 last:mb-0">
+                                {children}
+                              </p>
+                            ),
+
+                            strong: ({
+                              children
+                            }) => (
+                              <strong className="font-black border-b-[3px] border-primary/40 dark:border-primary/60 pb-0.5">
+                                {children}
+                              </strong>
+                            ),
+
+                            ul: ({
+                              children
+                            }) => (
+                              <ul className="list-disc pl-6 mb-4 space-y-2">
+                                {children}
+                              </ul>
+                            ),
+
+                            ol: ({
+                              children
+                            }) => (
+                              <ol className="list-decimal pl-6 mb-4 space-y-2">
+                                {children}
+                              </ol>
+                            ),
+
+                            li: ({
+                              children
+                            }) => (
+                              <li className="mb-1">
+                                {children}
+                              </li>
+                            )
+                          }}
+                        >
+                          {msg.content}
+                        </ReactMarkdown>
+
+                      </div>
+
+                    </div>
+
                   </div>
 
-                  <div className={cn(
-                    "p-6 max-w-[90%] md:max-w-[75%] shadow-sm rounded-[24px] border transition-all",
-                    msg.role === "assistant"
-                      ? "bg-card border-border text-foreground"
-                      : "bg-primary text-[#000000] border-primary font-bold"
-                  )}>
-                    <div className="text-xs md:text-sm leading-relaxed font-mono whitespace-pre-wrap">
-                      <ReactMarkdown
-                        components={{
-                          p: ({ children }) => <p className="mb-4 last:mb-0">{children}</p>,
-                          strong: ({ children }) => <strong className="font-black border-b-[3px] border-primary/40 dark:border-primary/60 pb-0.5">{children}</strong>,
-                          ul: ({ children }) => <ul className="list-disc pl-6 mb-4 space-y-2">{children}</ul>,
-                          ol: ({ children }) => <ol className="list-decimal pl-6 mb-4 space-y-2">{children}</ol>,
-                          li: ({ children }) => <li className="mb-1">{children}</li>,
-                        }}
-                      >
-                        {msg.content}
-                      </ReactMarkdown>
-                    </div>
-                  </div>
-                </div>
-              ))
+                )
+              )
+
             )}
+
+
+            {/* ================================================= */}
+            {/* LOADING */}
+            {/* ================================================= */}
 
             {loading && (
+
               <div className="flex flex-col space-y-2 animate-nothing">
+
                 <div className="flex items-center gap-2 text-[9px] n-dot text-muted px-2">
-                  <Loader2 className="w-3 h-3 animate-spin text-primary" />
+
+                  <Loader2
+                    className="w-3 h-3 animate-spin text-primary"
+                  />
+
                   AI_CORE_PROCESSING...
+
                 </div>
+
+
                 <div className="nothing-widget p-6 w-32 flex justify-between">
+
                   <div className="w-1 h-3 bg-primary animate-bounce" />
+
                   <div className="w-1 h-3 bg-primary animate-bounce [animation-delay:-0.1s]" />
+
                   <div className="w-1 h-3 bg-primary animate-bounce [animation-delay:-0.2s]" />
+
                 </div>
+
               </div>
+
             )}
-            {/* Spacer for floating bar */}
+
+
+            {/* Spacer */}
+
             <div className="h-32 w-full shrink-0" />
+
           </div>
 
-          {/* Floating Terminal Input */}
+
+          {/* ================================================= */}
+          {/* INPUT */}
+          {/* ================================================= */}
+
           <div className="fixed bottom-8 left-0 right-0 z-30 px-4 md:px-8">
+
             <div className="max-w-4xl mx-auto flex gap-4 p-2 rounded-full bg-card/60 backdrop-blur-xl border border-border/50 shadow-2xl">
+
               <div className="flex-1 relative">
-                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-mono text-sm opacity-50">&gt;_</div>
+
+                <div className="absolute left-6 top-1/2 -translate-y-1/2 text-primary font-mono text-sm opacity-50">
+                  &gt;_
+                </div>
+
+
                 <input
                   value={input}
-                  onChange={e => setInput(e.target.value)}
-                  onKeyDown={e => e.key === "Enter" && sendMessage()}
+                  onChange={e =>
+                    setInput(
+                      e.target.value
+                    )
+                  }
+                  onKeyDown={e => {
+
+                    if (
+                      e.key === "Enter"
+                      && !e.shiftKey
+                    ) {
+
+                      sendMessage()
+
+                    }
+
+                  }}
                   placeholder="Enter Command or Question..."
                   className="w-full bg-transparent px-14 py-4 text-sm n-dot focus:outline-none transition-all"
                 />
+
               </div>
+
+
               <button
                 onClick={sendMessage}
-                disabled={loading || !input.trim()}
+                disabled={
+                  loading
+                  || !input.trim()
+                }
                 className={cn(
                   "w-12 h-12 rounded-full border border-border flex items-center justify-center transition-all bg-background/50",
-                  loading || !input.trim() ? "opacity-20" : "hover:bg-primary hover:border-primary hover:text-black"
+
+                  loading || !input.trim()
+                    ? "opacity-20"
+                    : "hover:bg-primary hover:border-primary hover:text-black"
                 )}
               >
+
                 <Send className="w-4 h-4" />
+
               </button>
+
             </div>
+
           </div>
+
         </main>
+
       </div>
+
     </div>
   )
 }
