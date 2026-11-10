@@ -133,7 +133,10 @@ export default function ChatPage() {
 
 
       const answer =
-        response.data.answer
+        response.data?.answer ||
+        response.data?.message ||
+        response.data?.error ||
+        "No response received from AI Core."
 
 
       setMessages(
@@ -141,29 +144,30 @@ export default function ChatPage() {
           ...prev,
           {
             role: "assistant",
-            content:
-              answer ||
-              "No response received from AI Core."
+            content: answer
           }
         ]
       )
 
 
-    } catch (err) {
+    } catch (err: any) {
 
       console.error(
         "Chat request failed:",
         err
       )
 
+      const errorDetail =
+        err?.response?.data?.message ||
+        err?.response?.data?.error ||
+        "AI Core Offline: Network request failed."
 
       setMessages(
         prev => [
           ...prev,
           {
             role: "assistant",
-            content:
-              "AI Core Offline: Network request failed."
+            content: errorDetail
           }
         ]
       )

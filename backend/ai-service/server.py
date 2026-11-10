@@ -158,5 +158,8 @@ async def ask(request: QueryRequest):
             "message": (
                 f"Failed to get answer: "
                 f"{error_message}"
+            ),
+            "answer": (
+                f"AI Core Error: {error_message}"
             )
         }
